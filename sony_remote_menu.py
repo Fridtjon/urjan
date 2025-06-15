@@ -2,17 +2,29 @@ import rumps
 import subprocess
 import broadlink
 import os
+import sys
 import time
 from dotenv import load_dotenv
 
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
 # Load environment variables from .env file
-load_dotenv()
+dotenv_path = resource_path('.env')
+load_dotenv(dotenv_path=dotenv_path)
 
 # --- Config ---
 DEVICE_IP = os.environ.get("DEVICE_IP")
 DEVICE_MAC = bytes.fromhex(os.environ.get("DEVICE_MAC"))
 DEVICE_TYPE = int(os.environ.get("DEVICE_TYPE"), 16)
-COMMANDS_DIR = os.environ.get("COMMANDS_DIR")
+COMMANDS_DIR = resource_path(os.environ.get("COMMANDS_DIR"))
 BLUETOOTH_MAC = os.environ.get("BLUETOOTH_MAC")
 
 # --- IR Send Helper ---
